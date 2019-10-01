@@ -28,14 +28,9 @@ var Sounds = [
   "708090/004.ogg",
   "708090/005.ogg",
   "708090/006.ogg",
-  "708090/007.ogg",
+  "708090/007.ogg", 
   "708090/008.ogg",
-  "708090/009.ogg",
-  "AUDIOS/001.js",
-  "AUDIOS/002.json",
-  "AUDIOS/003.txt",
-  "AUDIOS/004.json",
-  "AUDIOS/005.mp3"
+  "708090/009.ogg"
 ];
 let Entradas = ["ENTRADAS/001.mp3", "ENTRADAS/002.mp3", "ENTRADAS/003.mp3"];
 let Intermedios = [
@@ -69,17 +64,16 @@ let Salidas = [
   "SALIDAS/BALLENATO-1.mp3",
   "SALIDAS/BALLENATO-2.mp3",
   "SALIDAS/BALLENATO-3.mp3",
-  "SALIDAS/80-1.mp3",
-  "SALIDAS/80-2.mp3",
-  "SALIDAS/80-3.mp3"
+  "SALIDAS/708090-1.mp3",
+  "SALIDAS/708090-2.mp3",
+  "SALIDAS/708090-3.mp3"
 ];
 let Generos = [
   "MERENGUE",
   "SALSA",
   "REGGAE",
   "BALLENATO",
-  "708090",
-  "AUDIOS"
+  "708090"
 ];
 
 let CurrentSounds = []; //Array para la lista que esta siendo tocada
@@ -96,12 +90,24 @@ const PlaySounds = () => {
     // CurrentSounds = Barajear(Sounds, algorithmoption);
     CurrentGeneros = Barajear(Generos, algorithmoption);
     SetCurrentSound();
+    SetEntradasSalidas();
   }
   //Tocamos la cancion segun el puntero en el array
   // SetSource(CurrentSounds[pointer]).then(_ => player.play());
   namesound.innerHTML = "Cancion en curso: " + CurrentSounds[pointer];
   //Para quitar esa línea del reporoductor solo hay que comentarla con 2 //
 };
+
+const SetEntradasSalidas = () => {
+  for (let i = 0; i < CurrentSounds.length; i++) {
+    const sound = CurrentSounds[i];
+    
+  }
+}
+
+const randomIntFromInterval = (min, max) => { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
 const SetSource = source =>
   new Promise((resolve, reject) => {
@@ -166,12 +172,25 @@ const SetCurrentSound = () => {
   // CurrentSounds = Barajear(CurrentSounds, algorithmoption);
   // Agrupar Audios por Genero
   let newLists = [];
-  CurrentGeneros.forEach(genero => {
-    const newSounds = Sounds.filter( sound => sound.split('/')[0] === genero);
-     //  console.log('newSounds', Barajear(newSounds, algorithmoption));
-     // Barajear cada Cancione del genero y agregarla a la lista de reproduccion
-     newLists = [...newLists, ...Barajear(newSounds, algorithmoption)];
-   });
+  CurrentGeneros.forEach((genero, index) => {
+    const newSounds = Sounds.filter(sound => sound.split("/")[0] === genero);
+    //  console.log('newSounds', Barajear(newSounds, algorithmoption));
+    // Barajear cada Cancione del genero y agregarla a la lista de reproduccion
+    let newSalida;
+    if (index === CurrentGeneros.length -1) {
+      newSalida = Salidas.filter(salida => salida.split('/')[1].split('-')[0] === CurrentGeneros[0]);
+    } else {
+      newSalida = Salidas.filter(salida => salida.split('/')[1].split('-')[0] === CurrentGeneros[index + 1]);
+    }
+    newLists = [
+      ...newLists,
+      ...Barajear(newSounds, algorithmoption),
+      Entradas[randomIntFromInterval(0, Entradas.length - 1)],
+      Intermedios[randomIntFromInterval(0, Intermedios.length - 1)],
+      newSalida[randomIntFromInterval(0, newSalida.length - 1)]
+    ];
+    // console.log('Salidas.', Salidas.map(salida => salida.split('/')[1].split('-')[0]))
+  });
    CurrentSounds = newLists;
   //  console.log('CurrentSounds next 1', CurrentSounds);
 }
@@ -218,11 +237,11 @@ const Next = () => {
       console.log(
         "---------------------------------------------------------------"
         );
-      console.info([CurrentSounds[0].split('/')[0], CurrentSoundstmp[0].split('/')[0]])
-      // console.log("Nueva lista:");
-      // console.log(CurrentSounds[0].split('/')[0]);
-      // console.log("Lista Anterior:");
-      // console.log(CurrentSoundstmp[0].split('/')[0]);
+      // console.info([CurrentSounds[0].split('/')[0], CurrentSoundstmp[0].split('/')[0]])
+      console.log("Nueva lista:");
+      console.log(CurrentSounds);
+      console.log("Lista Anterior:");
+      console.log(CurrentSoundstmp);
       console.log(
         "---------------------------------------------------------------"
       );
